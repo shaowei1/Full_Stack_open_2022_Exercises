@@ -8,6 +8,14 @@ const Header= ({text}) => {
 const Statistics = (props) => {
   const text2 = props.text
   const [good, neutral, bad] = props.values 
+  if (good == 0 && neutral == 0 && bad == 0){
+    return (
+        <div>
+            <Header text={text2} />
+            <div>No feedback given</div>
+        </div>
+    )
+  }
   const total = () => good + neutral + bad
   const average = () => {
     return (good * 1 + neutral * 0 + bad * -1) / total()
