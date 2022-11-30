@@ -8,28 +8,6 @@ const Persons = (prop) => (
 		))}
 	</ul>
 );
-const PersonForm = (prop) => (
-	<form onSubmit={prop.addPerson}>
-		<div>
-			name:
-			<input value={prop.newName} onChange={prop.handleNameChange} />
-		</div>
-		<div>
-			number: <input value={prop.newPhoneNumber} onChange={prop.handlePhoneNumberChange} />
-		</div>
-		<div>
-			<button type="submit">add</button>
-		</div>
-	</form>
-);
-
-const Filter = (prop) => (
-	<div>
-		filter shown with
-		<input value={prop.queryName} onChange={prop.handleQueryNameChange} />
-	</div>
-);
-
 const App = () => {
 	const [persons, setPersons] = useState([
 		{ name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -40,6 +18,7 @@ const App = () => {
 	const [newName, setNewName] = useState("");
 	const [queryName, setQueryName] = useState("");
 	const [newPhoneNumber, setnewPhoneNumber] = useState("");
+	const [showAll, setShowAll] = useState(true);
 
 	const addPerson = (event) => {
 		event.preventDefault();
@@ -69,7 +48,7 @@ const App = () => {
 		setNewName(event.target.value);
 	};
 
-	const handleQueryNameChange = (event) => {
+	const handlePersonNameChange = (event) => {
 		setQueryName(event.target.value);
 	};
 	const nameToShow =
@@ -79,18 +58,27 @@ const App = () => {
 	return (
 		<div>
 			<h1>PhoneBook</h1>
-			<Filter queryName={queryName} handleQueryNameChange={handleQueryNameChange} />
+			<div>debug: {newName}</div>
+			<div>
+				filter shown with
+				<input value={queryName} onChange={handlePersonNameChange} />
+			</div>
 
 			<h2>add a new</h2>
-			<PersonForm
-				addPerson={addPerson}
-				newName={newName}
-				newPhoneNumber={newPhoneNumber}
-				handleNameChange={handleNameChange}
-				handlePhoneNumberChange={handlePhoneNumberChange}
-			/>
+			<form onSubmit={addPerson}>
+				<div>
+					name:
+					<input value={newName} onChange={handleNameChange} />
+				</div>
+				<div>
+					number: <input value={newPhoneNumber} onChange={handlePhoneNumberChange} />
+				</div>
+				<div>
+					<button type="submit">add</button>
+				</div>
+			</form>
 			<h2>Numbers</h2>
-			<Persons persons={nameToShow} />
+			<Persons person={nameToShow} />
 		</div>
 	);
 };
