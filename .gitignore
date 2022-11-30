@@ -25,3 +25,6 @@ yarn-error.log*
 
 # log
 log.file
+
+# local test dir
+my_code
