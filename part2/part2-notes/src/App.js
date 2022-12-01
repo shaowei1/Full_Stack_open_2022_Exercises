@@ -1,7 +1,20 @@
+import "./index.css";
 import { useEffect, useState } from "react";
 import Person from "./components/Person";
 import personService from "./services/persons";
+const Notification = ({ message, type }) => {
+	if (message === null) {
+		console.log("message is null");
+		return null;
+	}
 
+	console.log(`message is ${message}, type is ${type}`);
+	if (type === "error") {
+		return <div className="error">{message}</div>;
+	} else {
+		return <div className="pass">{message}</div>;
+	}
+};
 const Persons = (prop) => (
 	<ul>
 		{prop.persons.map((person) => (
@@ -40,6 +53,8 @@ const App = () => {
 	const [newName, setNewName] = useState("");
 	const [queryName, setQueryName] = useState("");
 	const [newPhoneNumber, setnewPhoneNumber] = useState("");
+	const [errorMessage, setErrorMessage] = useState(null);
+	const [notificationType, setNotificationType] = useState(null);
 	useEffect(() => {
 		personService.getAll().then((initialNotes) => {
 			setPersons(initialNotes);
@@ -54,11 +69,28 @@ const App = () => {
 			);
 			const changedPerson = { ...person, number: newPhoneNumber };
 			let id = person.id;
-			personService.update(id, changedPerson).then((responsePerson) => {
-				setPersons(persons.map((person) => (person.id !== id ? person : responsePerson)));
-				setNewName("");
-				setnewPhoneNumber("");
-			});
+			personService
+				.update(id, changedPerson)
+				.then((responsePerson) => {
+					setPersons(persons.map((person) => (person.id !== id ? person : responsePerson)));
+					setNewName("");
+					setnewPhoneNumber("");
+					setErrorMessage(`Updated ${person.name}`);
+					setNotificationType("pass");
+					setTimeout(() => {
+						setErrorMessage(null);
+						setNotificationType(null);
+					}, 5000);
+				})
+				.catch((error) => {
+					setPersons(persons.filter((n) => n.id !== id));
+					setErrorMessage(`Information of ${person.name} has already beej removed from server`);
+					setNotificationType("error");
+					setTimeout(() => {
+						setErrorMessage(null);
+						setNotificationType(null);
+					}, 5000);
+				});
 		} else {
 			const personObject = {
 				name: newName,
@@ -70,6 +102,12 @@ const App = () => {
 				setPersons(persons.concat(responsePerson));
 				setNewName("");
 				setnewPhoneNumber("");
+				setErrorMessage(`Added ${newName}`);
+				setNotificationType("pass");
+				setTimeout(() => {
+					setErrorMessage(null);
+					setNotificationType(null);
+				}, 5000);
 			});
 		}
 	};
@@ -98,6 +136,7 @@ const App = () => {
 	return (
 		<div>
 			<h1>PhoneBook</h1>
+			<Notification message={errorMessage} type={notificationType} />
 			<Filter queryName={queryName} handleQueryNameChange={handleQueryNameChange} />
 
 			<h2>add a new</h2>
