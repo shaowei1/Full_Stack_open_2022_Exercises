@@ -98,17 +98,27 @@ const App = () => {
 				date: new Date().toISOString(),
 				important: Math.random() < 0.5,
 			};
-			personService.create(personObject).then((responsePerson) => {
-				setPersons(persons.concat(responsePerson));
-				setNewName("");
-				setnewPhoneNumber("");
-				setErrorMessage(`Added ${newName}`);
-				setNotificationType("pass");
-				setTimeout(() => {
-					setErrorMessage(null);
-					setNotificationType(null);
-				}, 5000);
-			});
+			personService
+				.create(personObject)
+				.then((responsePerson) => {
+					setPersons(persons.concat(responsePerson));
+					setNewName("");
+					setnewPhoneNumber("");
+					setErrorMessage(`Added ${newName}`);
+					setNotificationType("pass");
+					setTimeout(() => {
+						setErrorMessage(null);
+						setNotificationType(null);
+					}, 5000);
+				})
+				.catch((error) => {
+					setErrorMessage(`${error.response.data.error}`);
+					setNotificationType("error");
+					setTimeout(() => {
+						setErrorMessage(null);
+						setNotificationType(null);
+					}, 5000);
+				});
 		}
 	};
 
