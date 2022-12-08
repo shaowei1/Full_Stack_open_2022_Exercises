@@ -67,6 +67,37 @@ test('reject add a invalid blog', async()=>{
   expect(response.statusCode).toBe(400)
 })
 
+test('a blog can be deleted', async() => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(
+    helper.initialBlogs.length - 1
+  )
+  const titles = blogsAtEnd.map(r => r.title)
+  expect(titles).not.toContain(blogToDelete.title)
+})
+
+test('a blog can be update', async() => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+  const updatBlog = {
+    title: 'new title',
+    likes: 7
+  }
+  const response = await api 
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatBlog)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.title).toBe(updatBlog.title)
+  expect(response.body.likes).toBe(updatBlog.likes)
+
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
