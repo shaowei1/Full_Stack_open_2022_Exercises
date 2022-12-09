@@ -10,6 +10,8 @@ npm install dotenv
 npm install --save-dev jest
 npm install --save-dev supertest
 npm install express-async-errors
+npm install jsonwebtoken
+npm install bcrypt
 
 # init
 npx eslint --init

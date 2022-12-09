@@ -1,3 +1,4 @@
 curl -X POST http://localhost:3003/api/blogs -H 'Content-Type: application/json' -d '{"title":"newtitle", "author": "steven jobs", "url": "www.baidu.com", "likes": "10"}' -i
+curl -X POST http://localhost:3003/api/users -H 'Content-Type: application/json' -d '{"username":"root", "passoword": "root", "name": "steven" }' -i
 
 curl -X DELETE -o - -I http://localhost:3003/api/blogs/4

@@ -32,13 +32,21 @@ test('a valid blog can be added', async () => {
     url: 'wwww.blog.com'
   }
 
+  const token = await helper.root_token()
   await api
     .post('/api/blogs')
+    .auth(token, { type: 'bearer' })
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
+  console.log('blogs', response.body)
+  let len = response.body.length
+  expect(response.body[len-1].user.username).toBe('root')
+  const usersResponse = await api.get('/api/users')
+  console.log('users', usersResponse.body[0].blogs)
+  expect(usersResponse.body[0].blogs[0].title).toBe(newBlog.title)
 
   const titles = response.body.map(r => r.title)
 
@@ -54,7 +62,11 @@ test('set likes default 0, if missing from request', async () => {
     author: 'sw',
     url: 'www.blog.com'
   }
-  const response = await api.post('/api/blogs').send(newBlog)
+  const token = await helper.root_token()
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .auth(token, { type: 'bearer' })
   expect(response.body.likes).toBe(0)
 })
 
@@ -63,7 +75,11 @@ test('reject add a invalid blog', async()=>{
     author: 'sw',
     likes: 3
   }
-  const response = await api.post('/api/blogs').send(newBlog)
+  const token = await helper.root_token()
+  const response = await api
+    .post('/api/blogs')
+    .auth(token, {type: 'bearer'})
+    .send(newBlog)
   expect(response.statusCode).toBe(400)
 })
 
